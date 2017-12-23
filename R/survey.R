@@ -5,6 +5,27 @@ dimnames.survey.design<-function(x) dimnames(x$variables)
 dimnames.svyrep.design<-function(x) dimnames(x$variables)
 dimnames.twophase<-function(x) dimnames(x$phase1$sample$variables)
 
+`$.survey.design` <- function(x, name){
+  if(exists(name, x)){
+    ## warning(paste0("'", name, "' is a protected name"))
+    x[[name]]
+  } else
+    x[["variables"]][[name]]
+}
+
+`$<-.survey.design` <- function(x, name, value){
+  if(exists(name, x)){
+    ## warning(paste0("'", name, "' is a protected name. Use update() to update variable."))
+    x[[name]] <- value
+  } else
+    x[["variables"]][[name]] <- value
+  return(x)
+}
+
+with.survey.design <- function(data,...){
+  with(data[["variables"]], ...)
+}
+
 oldsvydesign<-function(ids,probs=NULL,strata=NULL,variables=NULL, fpc=NULL,
                     data=NULL, nest=FALSE, check.strata=!nest,weights=NULL){
  

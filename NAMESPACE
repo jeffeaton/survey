@@ -442,7 +442,11 @@ S3method(`[`, DBIrepdesign)
 S3method(`[`, ODBCsvydesign)
          
 
-S3method(`[<-`, survey.design)         
+S3method(`[<-`, survey.design)
+S3method(`$`, survey.design)
+S3method(`$<-`, survey.design)
+
+S3method(with, survey.design)
          
 
 S3method(svylogrank,survey.design2)
