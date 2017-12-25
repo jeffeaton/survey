@@ -5,8 +5,11 @@ dimnames.survey.design<-function(x) dimnames(x$variables)
 dimnames.svyrep.design<-function(x) dimnames(x$variables)
 dimnames.twophase<-function(x) dimnames(x$phase1$sample$variables)
 
+.svydesign.reserved <- c("cluster", "strata", "has.strata", "prob", "allprob",
+                         "call", "variables", "fpc", "pps", "postStrata")
+
 `$.survey.design` <- function(x, name){
-  if(exists(name, x)){
+  if(name %in% .svydesign.reserved){
     ## warning(paste0("'", name, "' is a protected name"))
     x[[name]]
   } else
@@ -14,7 +17,7 @@ dimnames.twophase<-function(x) dimnames(x$phase1$sample$variables)
 }
 
 `$<-.survey.design` <- function(x, name, value){
-  if(exists(name, x)){
+  if(name %in% .svydesign.reserved){
     ## warning(paste0("'", name, "' is a protected name. Use update() to update variable."))
     x[[name]] <- value
   } else
