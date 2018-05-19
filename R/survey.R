@@ -1269,12 +1269,12 @@ anova.svycoxph<-function(object,...){
     stop("No anova method for survey models")
 }
 
-svyglm<-function(formula, design, ...){
+svyglm<-function(formula, design,subset=NULL,family=stats::gaussian(),start=NULL, ...){
   .svycheck(design)
   UseMethod("svyglm",design)
 }
 
-svyglm.survey.design<-function(formula,design,subset=NULL,...){
+svyglm.survey.design<-function(formula,design,subset=NULL, family=stats::gaussian(),start=NULL,...){
 
       subset<-substitute(subset)
       subset<-eval(subset, model.frame(design), parent.frame())
@@ -1287,6 +1287,7 @@ svyglm.survey.design<-function(formula,design,subset=NULL,...){
       g$formula<-eval.parent(g$formula)
       g$design<-NULL
       g$var<-NULL
+      g$family<-family
       if (is.null(g$weights))
         g$weights<-quote(.survey.prob.weights)
       else 
@@ -1510,7 +1511,26 @@ dBIC<-function(modela,modelM){
 		nstar=NaN
 		}
 	c(p=pm, BIC=wald+pm*log(n)+log(detDelta)+deviance(modelM),neff=nstar)
-	}	
+    }
+
+extractAIC.svrepcoxph<-function (fit, scale, k = 2, ...) .NotYetImplemented()
+extractAIC.svycoxph<-function (fit, scale, k = 2, ...) 
+{
+    Delta<-solve(fit$inv.info, fit$var)
+    deltabar <- mean(diag(Delta))
+    d <- -2*fit$ll[1]
+    c(eff.p = sum(diag(Delta)), AIC = d + k * sum(diag(Delta)), deltabar = deltabar)
+}
+AIC.svycoxph<-function (object, ..., k = 2) 
+{
+    if (length(list(...))) {
+        do.call(rbind, lapply(list(object, ...), extractAIC, 
+            k = k))
+    }
+    else {
+        extractAIC(object, k = k)
+    }
+}
 
 
 confint.svyglm<-function(object,parm,level=0.95,method=c("Wald","likelihood"),ddf=Inf,...){
