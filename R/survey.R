@@ -2174,7 +2174,10 @@ predict.svyglm <- function(object, newdata=NULL, total=NULL,
     if (!is.null(total) && attr(tt,"intercept")){
         mm[,attr(tt,"intercept")]<-mm[,attr(tt,"intercept")]*total
     }
-    eta<-drop(mm %*% coef(object))
+
+    beta <- coef(object)
+    mm <- mm[ , colnames(mm) %in% names(beta)]
+    eta<-drop(mm %*% beta)
     d<-drop(object$family$mu.eta(eta))
     eta<-switch(type, link=eta, response=object$family$linkinv(eta))
     if(se.fit){
